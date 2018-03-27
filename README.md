@@ -1,6 +1,6 @@
-# Paperspace Gradient updates to Google's TPU ResNet tutorial code
+# Gradient updates to Google's TPU ResNet tutorial
 
-This is a straightforward port of the Resnet-50 model done by Google's TPU team, but with slight modifications to enable the code to run as a Gradient job. The code was based on the original version from the tensorflow/models repository.
+This is a straightforward port of the Resnet-50 model done by Google's TPU team, but with slight modifications to enable the code to run as a Paperspace Gradient job. The code was based on the original version from the tensorflow/models repository.
 
 The only adjustments have been to add environment variables as sources of information for the main python script, to enable the script to access Gradient allocated TPUs and Google cloud storage buckets.  (Currently TPUs running in Google's cloud need to read and write data to/from Google cloud storage directly, as opposed to a local file system location or network mount.)
 
