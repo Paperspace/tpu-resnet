@@ -1,19 +1,29 @@
-# Cloud TPU Port of the Resnet50 model
-This is a straightforward port of the Resnet-50 model. The code was based on the original version from the tensorflow/models repository.
+# Paperspace Gradient updates to Google's TPU ResNet tutorial code
 
-The only adjustments have been to add the required code to enable using the TPUEstimator interface, along with the data processing pipeline for ImageNet.
+This is a straightforward port of the Resnet-50 model done by Google's TPU team, but with slight modifications to enable the code to run as a Gradient job. The code was based on the original version from the tensorflow/models repository.
 
-### Running the model
-Assuming you have a version of ImageNet converted to the tfrecord format located at gs://my-cloud-bucket/data/imagenet/, you can run this model with the following command:
+The only adjustments have been to add environment variables as sources of information for the main python script, to enable the script to access Gradient allocated TPUs and Google cloud storage buckets.  (Currently TPUs running in Google's cloud need to read and write data to/from Google cloud storage directly, as opposed to a local file system location or network mount.)
 
-python resnet_main.py\
-  --master=$TPU_WORKER \
-  --data_dir=gs://my-cloud-bucket/data/imagenet \
-  --model_dir=gs://my-cloud-bucket/models/resnet/v0 \
+### Running the model on Gradient
+This model assumes the input data is availabe in a publicly accessible Google cloud storage bucket--in this case we are using the randomly generated fake dataset located at `gs://cloud-tpu-test-datasets/fake_imagenet`
+
+python resnet_main.py \
+  --master=$TPU_GRPC_URL \
+  --data_dir=gs://cloud-tpu-test-datasets/fake_imagenet \
+  --model_dir=$TPU_MODEL_DIR \
   --train_batch_size=1024 \
   --eval_batch_size=128 \
 
-You can create the ImageNet dataset in the correct format using this [script](https://github.com/tensorflow/tpu-demos/blob/master/cloud_tpu/datasets/imagenet_to_gcs.py).
+The $TPU_GRPC_URL parameter is an environment variable provided by the Gradient job runner cluster machine which identifies the ip address and port of the TPU device assigned to the job.
 
-### Running the model with Fake Data
-If you do not have ImageNet dataset prepared, you can use a randomly generated fake dataset to test the model. It is located at `gs://cloud-tpu-test-datasets/fake_imagenet`. You can pass this path as your `data_dir` to the `resnet_main.py`.
+The $TPU_MODEL_DIR is a Google cloud storage bucket provided to the job for output of the model results.  Any results created in this path by the TPU code will be uploaded to the job artifacts list on completion of the job.
+
+### Running the model with Real Data
+The Google cloud storage bucket specified by the $TPU_MODEL_DIR environment variable can also be used as the root of a staging location for training data to be read by the model.  To use this bucket as both an input source and an output destination we recommend you put the input data and output data in separate subfolders, e.g., by using options of the form:
+
+  --data_dir=$TPU_MODEL_DIR/input_data
+  --model_dir=$TPU_MODEL_DIR/output_data
+
+Also to prevent uploading of the input data at the completion of the job, you may wish to delete that subirectory tree within the bucket.  You can do this with the gsutil tool from Google, from within your job script.
+
+To create an ImageNet dataset in the correct format for tensorflow you can use this Google provided [script](https://github.com/tensorflow/tpu/blob/master/tools/datasets/imagenet_to_gcs.py).  See the script comments for more information.
