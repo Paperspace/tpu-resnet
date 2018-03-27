@@ -7,12 +7,12 @@ The only adjustments have been to add environment variables as sources of inform
 ### Running the model on Gradient
 This model assumes the input data is availabe in a publicly accessible Google cloud storage bucket--in this case we are using the randomly generated fake dataset located at `gs://cloud-tpu-test-datasets/fake_imagenet`
 
-python resnet_main.py \
-  --master=$TPU_GRPC_URL \
-  --data_dir=gs://cloud-tpu-test-datasets/fake_imagenet \
-  --model_dir=$TPU_MODEL_DIR \
-  --train_batch_size=1024 \
-  --eval_batch_size=128 \
+	python resnet_main.py \
+	  --master=$TPU_GRPC_URL \
+	  --data_dir=gs://cloud-tpu-test-datasets/fake_imagenet \
+	  --model_dir=$TPU_MODEL_DIR \
+	  --train_batch_size=1024 \
+	  --eval_batch_size=128
 
 The $TPU_GRPC_URL parameter is an environment variable provided by the Gradient job runner cluster machine which identifies the ip address and port of the TPU device assigned to the job.
 
