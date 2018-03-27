@@ -18,6 +18,8 @@ The $TPU_GRPC_URL parameter is an environment variable provided by the Gradient 
 
 The $TPU_MODEL_DIR is a Google cloud storage bucket provided to the job for output of the model results.  Any results created in this path by the TPU code will be uploaded to the job artifacts list on completion of the job.
 
+Note: The ResNet-50 example is potentially a long-running job, and can take up to 20 hours to complete.
+
 ### Running the model with Real Data
 The Google cloud storage bucket specified by the $TPU_MODEL_DIR environment variable can also be used as the root of a staging location for training data to be read by the model.  To use this bucket as both an input source and an output destination we recommend you put the input data and output data in separate subfolders, e.g., by using options of the form:
 
