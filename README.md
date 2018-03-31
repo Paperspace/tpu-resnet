@@ -7,6 +7,8 @@ The only adjustments have been to add environment variables as sources of inform
 ### Running the model on Gradient
 This model assumes the input data is availabe in a publicly accessible Google cloud storage bucket--in this case we are using the randomly generated fake dataset located at `gs://cloud-tpu-test-datasets/fake_imagenet`
 
+A typical pythoncommand you would run on Gradient job runner would be:
+
 	python resnet_main.py \
 	  --master=$TPU_GRPC_URL \
 	  --data_dir=gs://cloud-tpu-test-datasets/fake_imagenet \
@@ -17,6 +19,14 @@ This model assumes the input data is availabe in a publicly accessible Google cl
 The $TPU_GRPC_URL parameter is an environment variable provided by the Gradient job runner cluster machine which identifies the ip address and port of the TPU device assigned to the job.
 
 The $TPU_MODEL_DIR is a Google cloud storage bucket provided to the job for output of the model results.  Any results created in this path by the TPU code will be uploaded to the job artifacts list on completion of the job.
+
+To run this command on Gradient using the Paperspace CLI enter:
+
+	paperspace jobs create --machineType TPU --container gcr.io/tensorflow/tensorflow:1.6.0 \
+		--command 'python resnet_main.py --master=$TPU_GRPC_URL --data_dir=gs://cloud-tpu-test-datasets/fake_imagenet --model_dir=$TPU_MODEL_DIR' \
+		--workspace git+https://github.com/Paperspace/tpu-resnet.git
+
+The above job creation command needs to use single quotes around the command string to prevent local expansion of the `$TPU_GRPC_URL` and `$TPU_MODEL_DIR` environment variables which are only defined on the remote job runner machine.
 
 Note: The ResNet-50 example is potentially a long-running job, and can take up to 20 hours to complete.
 
